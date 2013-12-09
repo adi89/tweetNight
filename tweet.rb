@@ -1,7 +1,6 @@
 require 'twitter'
 require 'pry-debugger'
 require 'pry-stack_explorer'
-require_relative 'recent'
 
 class Tweet
   attr_accessor :client
@@ -39,26 +38,41 @@ class Tweet
     tweet.user.screen_name
   end
 
-  def list_members_data(list)
-    client.list_members(list).attrs[:users]
+  def list_members_response(list, options)
+    client.list_members(list, options)
   end
 
   def list_members_ids(list)
-    list_members_data('Information').map{|i| i[:id_str]}
+    collect_list_all_members_data(list).map{|i| i[:id_str]}
+  end
+
+  def list_members_string(list)
+    list_members_ids(list).join(',')
   end
 
   def id(tweet)
     tweet.user.id
   end
 
-  def message_with_username
-    list_members_data('Information').collect{|tweet| Message.new(tweet.full_text, username(tweet), id(tweet))}
+  def message_with_username(list)
+    collect_list_all_members_data(list).collect{|tweet| Message.new(tweet.full_text, username(tweet), id(tweet))}
   end
 
-  def stream_messages
-    stream.site(:follow => list_members_ids('Information').first) do |object|
-      puts "#{object.class}"
+  def stream_messages(list)
+    stream.filter(:follow => list_members_string(list)) do |object|
+      puts "#{username(object)}: #{object.full_text}" if object.is_a?(Twitter::Tweet)
     end
+  end
+
+  def collect_list_all_members_data(list)
+    collection = []
+    cursor = -1
+    while (cursor != 0)
+      response = list_members_response(list, {:cursor => cursor})
+      collection += response.attrs[:users]
+      cursor = response.next_cursor
+    end
+    collection
   end
 
 end
