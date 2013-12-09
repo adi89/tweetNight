@@ -28,14 +28,12 @@ class Tweet
     end
   end
 
-  Message = Struct.new(:full_text, :username, :id)
-
-  def list_members_timeline_data(list)
-    client.list_timeline(list, {count: 200})
-  end
-
   def username(tweet)
     tweet.user.screen_name
+  end
+
+  def full_text(tweet)
+    tweet.full_text
   end
 
   def list_members_response(list, options)
@@ -46,21 +44,17 @@ class Tweet
     collect_list_all_members_data(list).map{|i| i[:id_str]}
   end
 
+  def arrayed_list_from_data(response)
+    response.attrs[:users]
+  end
+
   def list_members_string(list)
     list_members_ids(list).join(',')
   end
 
-  def id(tweet)
-    tweet.user.id
-  end
-
-  def message_with_username(list)
-    collect_list_all_members_data(list).collect{|tweet| Message.new(tweet.full_text, username(tweet), id(tweet))}
-  end
-
   def stream_messages(list)
     stream.filter(:follow => list_members_string(list)) do |object|
-      puts "#{username(object)}: #{object.full_text}" if object.is_a?(Twitter::Tweet)
+      puts "#{username(object)}: #{full_text(object)}" if object.is_a?(Twitter::Tweet)
     end
   end
 
@@ -69,7 +63,7 @@ class Tweet
     cursor = -1
     while (cursor != 0)
       response = list_members_response(list, {:cursor => cursor})
-      collection += response.attrs[:users]
+      collection += arrayed_list_from_data(response)
       cursor = response.next_cursor
     end
     collection
