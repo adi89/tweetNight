@@ -7,7 +7,7 @@ def selection(choice)
 end
 
 def night_stream
-  t = Stream.new(Tweet.new)
+  t = Stream.new(TweetResponse.new)
 
   puts "Select a category:"
   puts "(1) Information"

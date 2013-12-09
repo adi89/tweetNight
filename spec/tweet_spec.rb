@@ -1,18 +1,15 @@
 require_relative 'spec_helper'
-require_relative '../tweet'
+require_relative '../tweet_response'
 
-describe Tweet do
-  let(:tweet) {Tweet.new}
+describe TweetResponse do
+  let(:tweet) {TweetResponse.new}
 
   describe '#initialize' do
     it 'creates an instance of Tweet' do
-      expect(tweet).to be_an_instance_of(Tweet)
+      expect(tweet).to be_an_instance_of(TweetResponse)
     end
     it 'initializes with a client' do
       expect(tweet.client).to_not eq nil
-    end
-    it 'initializes with a stream' do
-      expect(tweet.stream).to_not eq nil
     end
   end
 

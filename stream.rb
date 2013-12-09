@@ -1,12 +1,12 @@
 require 'pry-debugger'
 require 'pry-stack_explorer'
 require 'rainbow'
-require_relative 'tweet'
+require_relative 'tweet_response'
 
 class Stream
-  attr_accessor :stream, :tweet
+  attr_accessor :stream, :tweet_response
   def initialize(tweet)
-    @tweet = tweet
+    @tweet_response = tweet
     @stream = stream
   end
 
@@ -19,28 +19,44 @@ class Stream
     end
   end
 
-  def stream_messages(list)
-    stream.filter(:follow => tweet.list_members_string(list)) do |object|
+  def filter_stream(list)
+    stream.filter(:follow => tweet_response.list_members_string(list)) do |object|
       parse_stream(object)
     end
   end
 
-  def parse_stream(object)
-    if object.is_a?(Twitter::Tweet)
-      print_tweet(object)
+  def stream_messages(list)
+    max = 3
+    num = 0
+    begin
+      num += 1
+      filter_stream(list)
+  rescue Twitter::Error::TooManyRequests => error
+    if num <= max
+      sleep error.rate_limit.reset_in
+      retry
+    else
+      raise
     end
   end
+end
 
-  def username(tweet)
-    tweet.user.screen_name
+def parse_stream(object)
+  if object.is_a?(Twitter::Tweet)
+    print_tweet(object)
   end
+end
 
-  def full_text(tweet)
-    tweet.full_text
-  end
+def username(tweet)
+  tweet.user.screen_name
+end
 
-  def print_tweet(tweet)
-    puts "#{username(tweet)}: ".color("440CE8") + "#{full_text(tweet)}".foreground(:cyan)
-  end
+def full_text(tweet)
+  tweet.full_text
+end
+
+def print_tweet(tweet)
+  puts "#{username(tweet)}: ".color("440CE8") + "#{full_text(tweet)}".foreground(:cyan)
+end
 
 end

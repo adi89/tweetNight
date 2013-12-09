@@ -3,7 +3,7 @@ require 'pry-debugger'
 require 'pry-stack_explorer'
 require 'rainbow'
 
-class Tweet
+class TweetResponse
   attr_accessor :client
   def initialize
     @client = client
