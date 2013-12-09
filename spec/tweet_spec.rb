@@ -44,15 +44,4 @@ describe Tweet do
       expect(tweet.list_members_string('information').class).to eq String
     end
   end
-  describe 'tweet methods' do
-    before(:each) do
-      @message = tweet.client.status(27558893223)
-    end
-    it '#full text' do
-      expect(tweet.full_text(@message)).to eq "Ruby is the best programming language for hiding the ugly bits."
-    end
-    it '#username' do
-      expect(tweet.username(@message)).to eq "sferik"
-    end
-  end
 end

@@ -1,18 +1,19 @@
 require 'pry-debugger'
 require 'pry-stack_explorer'
-require_relative 'tweet'
+require_relative 'stream'
 
 def selection(choice)
-  puts "You selected #{choice}......."
+  puts "You selected #{choice}.......".color("E89C0C")
 end
 
 def night_stream
-  t = Tweet.new
+  t = Stream.new(Tweet.new)
+
   puts "Select a category:"
   puts "(1) Information"
   puts "(2) High End DJs"
   puts "(3) NY Promoters"
-  puts "(4) NY Scensters"
+  puts "(4) NY Scenesters"
   response = gets.chomp
   case response
   when '1'

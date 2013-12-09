@@ -11,3 +11,6 @@ get the lowdown:
 -scenesters
 
 tweetNight users the twitter ruby gem, and especially the streaming api to deliver the most up to the minute tweets.
+
+the app does make use of private lists, which have been amassed with relevant followers for each category.
+
